@@ -1,0 +1,4 @@
+[build]
+  base = "packages/blog-starter-kit/themes/enterprise"
+  command = "pnpm --filter @starter-kit/blog-enterprise... run build"
+  publish = ".next"
