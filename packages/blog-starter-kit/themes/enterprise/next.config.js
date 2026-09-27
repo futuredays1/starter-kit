@@ -28,13 +28,31 @@ const getRedirectionRules = async () => {
 		}
   	`;
 
-	const data = await request(GQL_ENDPOINT, query, undefined, {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-});
+let data;
+try {
+    const response = await fetch(GQL_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+        body: JSON.stringify({ query }),
+    });
 
-	if (!data.publication) {
-		throw 'Please ensure you have set the env var NEXT_PUBLIC_HASHNODE_PUBLICATION_HOST correctly.';
-	}
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+        // API returned HTML (bot challenge) — skip redirects
+        return [];
+    }
+
+    data = await response.json();
+} catch (e) {
+    return [];
+}
+
+	if (!data || !data.publication) {
+    return [];
+}
 
 	const redirectionRules = data.publication.redirectionRules;
 
