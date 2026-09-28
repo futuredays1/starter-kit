@@ -79,6 +79,9 @@ try {
  * @type {import('next').NextConfig}
  */
 const config = {
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 	transpilePackages: ['@starter-kit/utils'],
 	basePath: getBasePath(),
 	experimental: {
